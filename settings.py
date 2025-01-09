@@ -4,7 +4,7 @@ TITLE_STRING = 'Digisoc Boba Plinko'
 FPS = 60
 
 # Maintain resolution regardless of Windows scaling settings
-ctypes.windll.user32.SetProcessDPIAware()
+# ctypes.windll.user32.SetProcessDPIAware()
 
 WIDTH = 1920
 HEIGHT = 1080
