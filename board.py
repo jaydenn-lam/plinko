@@ -8,26 +8,38 @@ class Board():
         self.space = space
         self.display_surface = pygame.display.get_surface()
 
+        # logo
+        self.logo = pygame.image.load("graphics/logo.png").convert_alpha()
+        self.logo = pygame.transform.scale(self.logo, (80,80))
+        self.logo_rect = self.logo.get_rect(topleft = (20,20))
+
+        # font
+        self.font = pygame.font.Font("graphics/starborn/Starborn.ttf", 18)
+
+        # reset button
+        self.clear_button_color = BROWN 
+        self.clear_button_hover_color = DARK_BROWN  
+        self.clear_button_rect = pygame.Rect(WIDTH // 2 - 180, HEIGHT - 130, 160, 80)
+        self.clear_button_text = self.font.render("CLEAR", True, (255, 255, 255))
+        self.clear_text_rect = self.clear_button_text.get_rect(center=self.clear_button_rect.center)
+        self.is_clear_hover = False
+
+        # drop button
+        self.drop_button_color = BROWN
+        self.drop_button_hover_color = DARK_BROWN
+        self.drop_button_rect = pygame.Rect(self.clear_button_rect.right + 40, HEIGHT - 130, 160, 80)
+        self.drop_button_text = self.font.render("DROP", True, (255, 255, 255))
+        self.drop_text_rect = self.drop_button_text.get_rect(center=self.drop_button_rect.center)
+        self.is_drop_hover = False
+
+        self.pressing_play = True
+
         # Obstacles
         self.curr_row_count = 3
         self.final_row_count = 10
         self.obstacles_list = []
         self.obstacle_sprites = pygame.sprite.Group()
         self.updated_coords = OBSTACLE_START
-
-        # # Play button
-        # self.play_up = pygame.image.load("graphics/play01.png").convert_alpha()
-        # self.play_down = pygame.image.load("graphics/play02.png").convert_alpha()
-        self.pressing_play = False
-        # self.play_orig_width = self.play_up.get_width()
-        # self.play_orig_height = self.play_up.get_height()
-
-        # # Scale the play image by 50%
-        # self.play_scaled_width = self.play_orig_width // 2
-        # self.play_scaled_height = self.play_orig_height // 2
-        # self.scaled_play_up = pygame.transform.scale(self.play_up, (self.play_scaled_width, self.play_scaled_height))
-        # self.scaled_play_down = pygame.transform.scale(self.play_down, (self.play_scaled_width, self.play_scaled_height))
-        # self.play_rect = self.scaled_play_up.get_rect(center=(WIDTH / 6, HEIGHT / 2))
 
         # Get second point for segmentA
         self.segmentA_2 = OBSTACLE_START
@@ -59,11 +71,51 @@ class Board():
         self.spawn_multis()
 
     def draw_cup(self):
-        pygame.draw.line(self.display_surface, (255, 255, 255), (650, 150), (700, 1000), 10)
-        pygame.draw.line(self.display_surface, (255, 255, 255), (700, 1000), (1220, 1000), 10)
-        pygame.draw.line(self.display_surface, (255, 255, 255), (1270, 150), (1220, 1000), 10)
-        pygame.draw.line(self.display_surface, (107, 74, 213), (550, 150), (1370, 150), 20)
-        pygame.draw.rect(self.display_surface, (140, 110, 80), (935, 0, 50, 250))
+        # screen dimension
+        screen_width, screen_height = self.display_surface.get_size()
+
+        # Cup dimensions
+        cup_width = 650
+        cup_height = 660
+        cup_x = (screen_width - cup_width) // 2
+        cup_y = 250
+
+        # Lid dimensions
+        lid_height = 120
+        lid_y = cup_y - lid_height
+
+        # Straw dimensions
+        straw_width = 100
+        straw_height = 100
+        straw_x = cup_x + cup_width // 2 - straw_width // 2
+        straw_y = lid_y - straw_height
+
+        # Draw the cup body
+        pygame.draw.polygon(self.display_surface, MILK_TEA, [(cup_x, cup_y), (cup_x + cup_width, cup_y), 
+                                    (cup_x + cup_width - 50, cup_y + cup_height - 80), 
+                                    (cup_x + cup_width - 120, cup_y + cup_height),
+                                    (cup_x + 120, cup_y + cup_height), 
+                                    (cup_x + 50, cup_y + cup_height - 80)])
+    
+        # Draw the lid
+        pygame.draw.rect(self.display_surface, BROWN, (cup_x - 50, lid_y, cup_width + 100, lid_height), border_radius = 10)
+
+
+        # Draw the straw
+        pygame.draw.rect(self.display_surface, STRAW, (straw_x, straw_y, straw_width, straw_height), border_top_left_radius = 5, border_top_right_radius = 5)
+
+        # Draw the lid's top border
+        pygame.draw.rect(self.display_surface, DARK_BROWN, (cup_x - 65, lid_y + 30, cup_width + 130, lid_height - 20), border_radius = 10)
+    
+    def draw_buttons(self):
+        clear_color = self.clear_button_hover_color if self.is_clear_hover else self.clear_button_color
+        pygame.draw.rect(self.display_surface, clear_color, self.clear_button_rect, border_radius = 25)
+        self.display_surface.blit(self.clear_button_text, self.clear_text_rect)
+
+        drop_color = self.drop_button_hover_color if self.is_drop_hover else self.drop_button_color
+        pygame.draw.rect(self.display_surface, drop_color, self.drop_button_rect, border_radius = 25)
+        self.display_surface.blit(self.drop_button_text, self.drop_text_rect)
+
 
     def draw_obstacles(self, obstacles):
         for obstacle in obstacles:
@@ -106,16 +158,25 @@ class Board():
         self.space.add(segment_body, segment_shape)
 
     def update(self):
+        self.display_surface.blit(self.logo, self.logo_rect)
         self.draw_cup()
         self.draw_obstacles(self.obstacles_list)
         multi_group.draw(self.display_surface)
         multi_group.update()
+        self.draw_buttons()
         if len(list(prev_multi_group)) > 0:
             prev_multi_group.update()
         if len(list(animation_group)) > 0:
             animation_group.update()
         self.draw_prev_multi_mask()
-        # if self.pressing_play:
-        #     self.display_surface.blit(self.scaled_play_down, (WIDTH // 16, HEIGHT // 3))
-        # else:
-        #     self.display_surface.blit(self.scaled_play_up, (WIDTH // 16, HEIGHT // 3))
+
+    def handle_clear_button(self, mouse_pos):
+        if self.clear_button_rect.collidepoint(mouse_pos):
+            self.is_clear_hover = True
+            return True
+        self.is_clear_hover = False
+        return False
+    
+    def handle_drop_button(self, mouse_pos):
+        self.is_drop_hover = self.drop_button_rect.collidepoint(mouse_pos)
+        return self.is_drop_hover

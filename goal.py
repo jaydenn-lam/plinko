@@ -10,7 +10,7 @@ class Multi(pygame.sprite.Sprite):
     def __init__(self, position, color, multi_amt):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
-        self.font = pygame.font.SysFont(None, 26)
+        self.font = pygame.font.Font("graphics/starborn/Starborn.ttf", 25)
         self.color = color
         self.border_radius = 10
         self.position = position
@@ -75,12 +75,14 @@ class PrevMulti(pygame.sprite.Sprite):
 
         # Rectangle stuff
         self.multi_amt = multi_amt
-        self.font = pygame.font.SysFont(None, 36)
-        self.rect_width = SCORE_RECT
-        self.rect_height = SCORE_RECT
+        self.font = pygame.font.Font("graphics/starborn/Starborn.ttf", 20)
+        self.rect_width = SCORE_RECT 
+        self.rect_height = SCORE_RECT 
         self.prev_surf = pygame.Surface((self.rect_width, self.rect_height), pygame.SRCALPHA)
         self.rgb = rgb_tuple
-        pygame.draw.rect(self.prev_surf, self.rgb, (0, 0, self.rect_width, self.rect_height))
+
+        pygame.draw.rect(self.prev_surf, self.rgb, (0, 0, self.rect_width, self.rect_height), border_radius = 30)
+
         self.prev_rect = self.prev_surf.get_rect(midbottom=(int(WIDTH * .85), (HEIGHT / 2) - (SCORE_RECT * 2)))
 
         # Animation
@@ -91,10 +93,11 @@ class PrevMulti(pygame.sprite.Sprite):
 
     def render_multi(self):
         if self.multi_amt == "0.2":
-            text_surface = self.font.render(f"WIN", True, (0, 0, 0))
+            text_surface = self.font.render(f"WIN", True, (255, 255, 255))
         else:
-            text_surface = self.font.render(f"", True, (0, 0, 0))
+            text_surface = self.font.render(f"LOSE", True, (107, 74, 213))
         text_rect = text_surface.get_rect(center=self.prev_surf.get_rect().center)
+
         self.prev_surf.blit(text_surface, text_rect)
 
     def update(self):
