@@ -4,13 +4,17 @@ TITLE_STRING = 'Digisoc Boba Plinko'
 FPS = 60
 
 # Maintain resolution regardless of Windows scaling settings
-ctypes.windll.user32.SetProcessDPIAware()
+# ctypes.windll.user32.SetProcessDPIAware()
 
 WIDTH = 1920
 HEIGHT = 1080
 
 # Plinko config
-BG_COLOR = (210, 169, 125)
+BG_COLOR = (255, 243, 234)
+BROWN = (122, 73, 32)  
+DARK_BROWN = (101, 67, 33)
+MILK_TEA = (222, 184, 135)
+STRAW = (235, 211, 170)
 MULTI_HEIGHT = int(HEIGHT / 19) # 56 on 1920x1080
 MULTI_COLLISION = HEIGHT - (MULTI_HEIGHT * 2) # 968 on 1920x1080
 

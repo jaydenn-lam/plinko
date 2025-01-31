@@ -5,7 +5,7 @@ from settings import *
 import ctypes, pygame, pymunk, random, sys
 
 # Maintain resolution regardless of Windows scaling settings
-ctypes.windll.user32.SetProcessDPIAware()
+# ctypes.windll.user32.SetProcessDPIAware()
 
 class Game:
     def __init__(self):
@@ -15,6 +15,7 @@ class Game:
         pygame.display.set_caption(TITLE_STRING)
         self.clock = pygame.time.Clock()
         self.delta_time = 0
+        pygame.mixer.init()
 
         # Pymunk
         self.space = pymunk.Space()
@@ -27,6 +28,11 @@ class Game:
         # Debugging
         self.balls_played = 0
 
+        # bgm
+        pygame.mixer.music.load("audio/boba date.mp3")
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.2)
+
     def run(self):
 
         self.start_time = pygame.time.get_ticks()
@@ -38,16 +44,32 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    # Get the position of the mouse click
-                    # mouse_pos = pygame.mouse.get_pos()
-                    # Check if the mouse click position collides with the image rectangle
-                    # if self.board.play_rect.collidepoint(mouse_pos):
-                    #     self.board.pressing_play = True
-                    # else:
-                    #     self.board.pressing_play = False
-                    self.board.pressing_play = True
-                # Spawn ball on left mouse button release
-                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_play:
+                    mouse_pos = pygame.mouse.get_pos()
+
+                    # Check for clear button click
+                    if self.board.handle_clear_button(mouse_pos):
+                        prev_multi_group.empty()  # Clear the score history
+                    
+                    # Check for drop button click
+                    elif self.board.handle_drop_button(mouse_pos):
+                        random_x = WIDTH // 2 + random.choice([random.randint(-20, -1), random.randint(1, 20)])
+                        self.ball = Ball((random_x, 250), self.space, self.board, self.delta_time)
+                        self.ball_group.add(self.ball)
+                        self.board.pressing_play = False
+
+                elif event.type == pygame.MOUSEMOTION:
+                    mouse_pos = pygame.mouse.get_pos()
+                    self.board.handle_clear_button(mouse_pos)
+                    self.board.handle_drop_button(mouse_pos)
+                  
+                #     # Check if the mouse click position collides with the image rectangle
+                #     if self.board.play_rect.collidepoint(mouse_pos):
+                #         self.board.pressing_play = True
+                #     else:
+                #         self.board.pressing_play = False
+                #     self.board.pressing_play = True
+                # # Spawn ball on left mouse button release
+                # elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.board.pressing_play:
                 #     mouse_pos = pygame.mouse.get_pos()
                 #     if self.board.play_rect.collidepoint(mouse_pos):
                 #         random_x = WIDTH//2 + random.choice([random.randint(-20, -1), random.randint(1, 20)])
@@ -57,10 +79,10 @@ class Game:
                 #         self.board.pressing_play = False
                 #     else:
                 #         self.board.pressing_play = False
-                    random_x = WIDTH//2 + random.choice([random.randint(-20, -1), random.randint(1, 20)])
-                    self.ball = Ball((random_x, 250), self.space, self.board, self.delta_time)
-                    self.ball_group.add(self.ball)
-                    self.board.pressing_play = False
+                #     random_x = WIDTH//2 + random.choice([random.randint(-20, -1), random.randint(1, 20)])
+                #     self.ball = Ball((random_x, 250), self.space, self.board, self.delta_time)
+                #     self.ball_group.add(self.ball)
+                #     self.board.pressing_play = False
 
             self.screen.fill(BG_COLOR)
 

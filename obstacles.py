@@ -1,6 +1,7 @@
 from settings import *
 import pygame, pygame.gfxdraw
 
+
 animation_group = pygame.sprite.Group()
 
 class Obstacle(pygame.sprite.Sprite):
