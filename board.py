@@ -13,6 +13,11 @@ class Board():
         self.logo = pygame.transform.scale(self.logo, (80,80))
         self.logo_rect = self.logo.get_rect(topleft = (20,20))
 
+        # ball counter
+        self.ball_count = 0
+        self.winning_count = 0
+        self.counter_font = pygame.font.Font("graphics/starborn/Starborn.ttf", 24)
+
         # font
         self.font = pygame.font.Font("graphics/starborn/Starborn.ttf", 18)
 
@@ -107,6 +112,13 @@ class Board():
         # Draw the lid's top border
         pygame.draw.rect(self.display_surface, DARK_BROWN, (cup_x - 65, lid_y + 30, cup_width + 130, lid_height - 20), border_radius = 10)
     
+    def draw_counter(self):
+        counter_text = self.counter_font.render(f"BALLS DROPPED: {self.ball_count}", True, BROWN)
+        self.display_surface.blit(counter_text, (100, 600))
+
+        winning_text = self.counter_font.render(f"WINS: {self.winning_count}", True, BROWN)  
+        self.display_surface.blit(winning_text, (100, 550)) 
+
     def draw_buttons(self):
         clear_color = self.clear_button_hover_color if self.is_clear_hover else self.clear_button_color
         pygame.draw.rect(self.display_surface, clear_color, self.clear_button_rect, border_radius = 25)
@@ -164,6 +176,8 @@ class Board():
         multi_group.draw(self.display_surface)
         multi_group.update()
         self.draw_buttons()
+        self.draw_counter()
+
         if len(list(prev_multi_group)) > 0:
             prev_multi_group.update()
         if len(list(animation_group)) > 0:
@@ -171,12 +185,22 @@ class Board():
         self.draw_prev_multi_mask()
 
     def handle_clear_button(self, mouse_pos):
-        if self.clear_button_rect.collidepoint(mouse_pos):
+        if self.clear_button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]: 
             self.is_clear_hover = True
+            self.ball_count = 0 
+            self.winning_count = 0
             return True
         self.is_clear_hover = False
         return False
     
     def handle_drop_button(self, mouse_pos):
-        self.is_drop_hover = self.drop_button_rect.collidepoint(mouse_pos)
-        return self.is_drop_hover
+        if self.drop_button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]: 
+            self.is_drop_hover = True
+            self.increment_ball_count()
+            return True
+        self.is_drop_hover = False
+        return False
+    
+    def increment_ball_count(self):
+        self.ball_count += 1
+

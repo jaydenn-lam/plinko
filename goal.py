@@ -6,6 +6,7 @@ multi_group = pygame.sprite.Group()
 clock = pygame.time.Clock()
 delta_time = clock.tick(FPS) / 1000.0
 
+
 class Multi(pygame.sprite.Sprite):
     def __init__(self, position, color, multi_amt):
         super().__init__()
