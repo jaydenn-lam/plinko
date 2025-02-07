@@ -15,6 +15,7 @@ class Board():
 
         # ball counter
         self.ball_count = 0
+        self.winning_count = 0
         self.counter_font = pygame.font.Font("graphics/starborn/Starborn.ttf", 24)
 
         # font
@@ -115,6 +116,9 @@ class Board():
         counter_text = self.counter_font.render(f"BALLS DROPPED: {self.ball_count}", True, BROWN)
         self.display_surface.blit(counter_text, (100, 600))
 
+        winning_text = self.counter_font.render(f"WINS: {self.winning_count}", True, BROWN)  
+        self.display_surface.blit(winning_text, (100, 550)) 
+
     def draw_buttons(self):
         clear_color = self.clear_button_hover_color if self.is_clear_hover else self.clear_button_color
         pygame.draw.rect(self.display_surface, clear_color, self.clear_button_rect, border_radius = 25)
@@ -184,6 +188,7 @@ class Board():
         if self.clear_button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]: 
             self.is_clear_hover = True
             self.ball_count = 0 
+            self.winning_count = 0
             return True
         self.is_clear_hover = False
         return False
