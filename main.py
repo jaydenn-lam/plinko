@@ -1,7 +1,7 @@
-from ball import Ball
-from board import *
-from goal import *
-from settings import *
+from data.ball import Ball
+from data.board import *
+from data.goal import *
+from data.settings import *
 import ctypes, pygame, pymunk, random, asyncio
 
 # Maintain resolution regardless of Windows scaling settings
@@ -44,6 +44,7 @@ class Game:
                     # Check for clear button click
                     if self.board.handle_clear_button(mouse_pos):
                         prev_multi_group.empty()  # Clear the score history
+                        self.ball_group.empty()  # Clear the balls
 
                     # Check for drop button click
                     elif self.board.handle_drop_button(mouse_pos):
@@ -52,7 +53,7 @@ class Game:
                         self.ball_group.add(self.ball)
                         self.board.pressing_play = False
                                              
-                elif event.type == pygame.MOUSEMOTION:
+                elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     self.board.handle_clear_button(mouse_pos)
                     self.board.handle_drop_button(mouse_pos)
