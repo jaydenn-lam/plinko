@@ -2,7 +2,7 @@ from ball import Ball
 from board import *
 from goal import *
 from settings import *
-import ctypes, pygame, pymunk, random, sys
+import ctypes, pygame, pymunk, random, asyncio
 
 # Maintain resolution regardless of Windows scaling settings
 # ctypes.windll.user32.SetProcessDPIAware()
@@ -30,15 +30,14 @@ class Game:
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.2)
 
-    def run(self):
+    async def main(self):
         self.start_time = pygame.time.get_ticks()
 
-        while True:
-            # Handle quit operation
+        running = True
+        while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    running = False  # Do not use sys.exit() in web environments
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
 
@@ -69,7 +68,10 @@ class Game:
             self.ball_group.update()
 
             pygame.display.update()
+            await asyncio.sleep(0)  # Allow async execution in the browser
+
+        pygame.quit()
 
 if __name__ == '__main__':
     game = Game()
-    game.run()
+    asyncio.run(game.main())  # Use asyncio.run() to make it web-compatible
