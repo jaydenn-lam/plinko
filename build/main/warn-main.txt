@@ -54,3 +54,7 @@ missing module named pygame.register_quit - imported by pygame (top-level), pyga
 missing module named pygame.error - imported by pygame (top-level), pygame.fastevent (top-level)
 missing module named 'pygame.overlay' - imported by pygame (optional)
 missing module named 'pygame.cdrom' - imported by pygame (conditional, optional)
+missing module named 'data.settings' - imported by /home/jayden/plinko/main.py (top-level)
+missing module named 'data.goal' - imported by /home/jayden/plinko/main.py (top-level)
+missing module named 'data.board' - imported by /home/jayden/plinko/main.py (top-level)
+missing module named data - imported by /home/jayden/plinko/main.py (top-level)
